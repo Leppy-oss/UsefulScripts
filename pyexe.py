@@ -93,7 +93,7 @@ for f in args.files:
     try:
         subprocess.run(
             [
-                sys.executable,
+                "python",
                 "-m",
                 "PyInstaller",
                 "--log-level",
