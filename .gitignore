@@ -1,3 +1,7 @@
+# ytpdf.py
+*.pdf
+ytpdf-*/
+
 # ytdl.py
 *.mp3
 *.mp4
@@ -225,3 +229,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# vscode
+.vscode/

@@ -1,6 +1,6 @@
 """
 Download YouTube video as video or audio
-Dependencies: `pip install yt-dlp`
+Dependencies: `pip install yt-dlp`; also make sure ffmpeg is installed
 Usage: `python ytdl.py [YOUTUBE_URL] --mode [mp3/mp4]
 """
 
@@ -21,7 +21,7 @@ def show_progress(data):
 """
 Download YouTube video from `url` as video (`mode`="mp4") or audio (`mode`="mp3") to `output_dir` (default to current dir)
 """
-def download(url: str, mode: str = "mp4", output_dir: Path = None):
+def download(url: str, mode: str="mp4", output_dir: Path=None):
     if output_dir is None:
         output_dir = Path.cwd()
 
@@ -71,4 +71,4 @@ def main():
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main() 
