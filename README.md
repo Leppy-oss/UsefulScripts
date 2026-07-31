@@ -1,2 +1,2 @@
-# Useful-Scripts
+# UsefulScripts
 Scripts I find useful.
