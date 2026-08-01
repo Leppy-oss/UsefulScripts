@@ -23,6 +23,7 @@ from ytdl import download
 A4W = 8.27
 A4H = 11.69
 
+
 def crop_frame(frame, bt, t, b, l, r, min_content_ratio=0.02):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     mask = gray > bt
@@ -33,19 +34,21 @@ def crop_frame(frame, bt, t, b, l, r, min_content_ratio=0.02):
     if len(rows) == 0 or len(cols) == 0:
         return frame
 
-    cropped = frame[
-        rows[0] + t : rows[-1] - b,
-        cols[0] + l : cols[-1] - r
-    ]
+    cropped = frame[rows[0] + t : rows[-1] - b, cols[0] + l : cols[-1] - r]
 
     return cropped if cropped.size > 0 else frame
 
+
 def create_fingerprint(frame, width=160, height=90):
-    return cv2.resize(
-        cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY),
-        (width, height),
-        interpolation=cv2.INTER_AREA
-    ).astype(np.float32) / 255.0
+    return (
+        cv2.resize(
+            cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY),
+            (width, height),
+            interpolation=cv2.INTER_AREA,
+        ).astype(np.float32)
+        / 255.0
+    )
+
 
 def unique_frame(fingerprint, selected_fingerprints, threshold):
     for selected in selected_fingerprints:
@@ -53,6 +56,7 @@ def unique_frame(fingerprint, selected_fingerprints, threshold):
             return False
 
     return True
+
 
 def get_unique_frames(video_path, fdir, interval, threshold, crop, bt, t, b, l, r):
     capture = cv2.VideoCapture(str(video_path))
@@ -102,12 +106,17 @@ def get_unique_frames(video_path, fdir, interval, threshold, crop, bt, t, b, l, 
 
         if frame_cnt > 0:
             percent = min(100, i / frame_cnt * 100)
-            print(f"\rProcessing video: {percent:5.1f}% "f"({n} unique frames)", end="", flush=True)
+            print(
+                f"\rProcessing video: {percent:5.1f}% " f"({n} unique frames)",
+                end="",
+                flush=True,
+            )
 
     capture.release()
     print()
 
     return fpaths
+
 
 def resize_frame(image, max_width, max_height):
     width_scale = max_width / image.width
@@ -119,7 +128,16 @@ def resize_frame(image, max_width, max_height):
 
     return image.resize((new_width, new_height), Image.Resampling.BOX)
 
-def save_pdf(frame_paths, out_dir, margin, gap, dpi, page_width_inches=A4W, page_height_inches=A4H):
+
+def save_pdf(
+    frame_paths,
+    out_dir,
+    margin,
+    gap,
+    dpi,
+    page_width_inches=A4W,
+    page_height_inches=A4H,
+):
     pg_width = round(page_width_inches * dpi)
     pg_height = round(page_height_inches * dpi)
     margin = round(margin * dpi)
@@ -139,12 +157,9 @@ def save_pdf(frame_paths, out_dir, margin, gap, dpi, page_width_inches=A4W, page
         noborders = 2
 
         frame = resize_frame(frame, max_width=content_width, max_height=content_height)
-        frame = frame.crop([
-            noborders,
-            noborders,
-            frame.width - noborders,
-            frame.height - noborders
-        ])
+        frame = frame.crop(
+            [noborders, noborders, frame.width - noborders, frame.height - noborders]
+        )
 
         left_height = frame.height
 
@@ -164,7 +179,9 @@ def save_pdf(frame_paths, out_dir, margin, gap, dpi, page_width_inches=A4W, page
         pg.paste(frame, (x, curr_y))
         curr_y += frame.height
 
-        print(f"\rCreating PDF: frame {index + 1}/{len(frame_paths)}", end="", flush=True)
+        print(
+            f"\rCreating PDF: frame {index + 1}/{len(frame_paths)}", end="", flush=True
+        )
 
     pgs.append(pg)
     print()
@@ -175,18 +192,25 @@ def save_pdf(frame_paths, out_dir, margin, gap, dpi, page_width_inches=A4W, page
 
 
 def find_downloaded_video(dir: Path) -> Path:
-    video_paths = sorted(dir.glob("*.mp4"), key=lambda f: f.stat().st_mtime, reverse=True)
+    video_paths = sorted(
+        dir.glob("*.mp4"), key=lambda f: f.stat().st_mtime, reverse=True
+    )
 
     if not video_paths:
         raise RuntimeError("Could not find the downloaded video file")
 
     return max(video_paths, key=lambda path: path.stat().st_size)
 
+
 parser = argparse.ArgumentParser()
 parser.add_argument("url")
-parser.add_argument("-o", "--o", "-output", "--output", type=Path, default=Path("output.pdf"))
+parser.add_argument(
+    "-o", "--o", "-output", "--output", type=Path, default=Path("output.pdf")
+)
 parser.add_argument("-i", "--i", "-interval", "--interval", type=float, default=1.0)
-parser.add_argument("-thresh", "--thresh", "-threshold", "--threshold", type=float, default=0.08)
+parser.add_argument(
+    "-thresh", "--thresh", "-threshold", "--threshold", type=float, default=0.08
+)
 parser.add_argument("-c", "--c", "-crop", "--crop", action="store_true")
 parser.add_argument("--bt", "--black-threshold", type=int, default=16)
 parser.add_argument("-m", "-margin", "--m", "--margin", type=float, default=0.25)
@@ -224,7 +248,18 @@ with tempfile.TemporaryDirectory(prefix="ytpdf-") as temp_name:
     print(f"Downloaded: {video_path.name}")
     print("Extracting unique frames...")
 
-    frame_paths = get_unique_frames(video_path, frames_dir, args.i, args.thresh, args.c, args.bt, args.t, args.b, args.l, args.r)
+    frame_paths = get_unique_frames(
+        video_path,
+        frames_dir,
+        args.i,
+        args.thresh,
+        args.c,
+        args.bt,
+        args.t,
+        args.b,
+        args.l,
+        args.r,
+    )
 
     print(f"Selected {len(frame_paths)} unique frames")
     print("Building PDF...")

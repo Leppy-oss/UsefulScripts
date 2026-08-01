@@ -13,7 +13,9 @@ from pathlib import Path
 
 parser = argparse.ArgumentParser()
 parser.add_argument("files", nargs="+", help="Python files to convert")
-parser.add_argument("-p", "--p", "-path", "--path", "--add-to-path", action="store_true")
+parser.add_argument(
+    "-p", "--p", "-path", "--path", "--add-to-path", action="store_true"
+)
 
 args = parser.parse_args()
 
@@ -25,6 +27,7 @@ os.makedirs(out_dir, exist_ok=True)
 
 platform = sys.platform
 print(f"Detected platform: {platform}")
+
 
 def add_to_path(fpath):
     if platform.startswith("win32"):
@@ -81,6 +84,7 @@ def add_to_path(fpath):
             print(f"Added {fpath} to $PATH")
         else:
             print(f"{fpath} already exists in $PATH")
+
 
 for f in args.files:
     fpath = curr_dir / f

@@ -10,6 +10,7 @@ from pathlib import Path
 
 import yt_dlp
 
+
 def show_progress(data):
     if data.get("status") == "downloading":
         percent = data.get("_percent_str", "").strip()
@@ -18,10 +19,13 @@ def show_progress(data):
     elif data.get("status") == "finished":
         print("\nDownload Complete")
 
+
 """
 Download YouTube video from `url` as video (`mode`="mp4") or audio (`mode`="mp3") to `output_dir` (default to current dir)
 """
-def download(url: str, mode: str="mp4", output_dir: Path=None):
+
+
+def download(url: str, mode: str = "mp4", output_dir: Path = None):
     if output_dir is None:
         output_dir = Path.cwd()
 
@@ -60,10 +64,13 @@ def download(url: str, mode: str="mp4", output_dir: Path=None):
         print(f"Download failed: {error}", file=sys.stderr)
         return 1
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("url")
-    parser.add_argument("-m", "--m", "-mode", "--mode", choices=("mp4", "mp3"), default="mp4")
+    parser.add_argument(
+        "-m", "--m", "-mode", "--mode", choices=("mp4", "mp3"), default="mp4"
+    )
     parser.add_argument("-o", "--o", "-output", "--output", type=Path, default=None)
     args = parser.parse_args()
 
@@ -71,4 +78,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main() 
+    main()
