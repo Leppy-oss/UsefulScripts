@@ -50,10 +50,9 @@ def create_fingerprint(frame, width=160, height=90):
     )
 
 
-def unique_frame(fingerprint, selected_fingerprints, threshold):
-    for selected in selected_fingerprints:
-        if float(np.mean(np.abs(fingerprint - selected))) < threshold:
-            return False
+def unique_frame(fprint, other, threshold):
+    if float(np.mean(np.abs(fprint - other))) < threshold:
+        return False
 
     return True
 
@@ -93,7 +92,7 @@ def get_unique_frames(video_path, fdir, interval, threshold, crop, bt, t, b, l, 
 
         fprint = create_fingerprint(frame)
 
-        if unique_frame(fprint, fprints, threshold):
+        if len(fprints) < 1 or unique_frame(fprint, fprints[-1], threshold):
             n += 1
             fpath = fdir / f"frame-{n:05d}.png"
 
@@ -209,7 +208,7 @@ parser.add_argument(
 )
 parser.add_argument("-i", "--i", "-interval", "--interval", type=float, default=1.0)
 parser.add_argument(
-    "-thresh", "--thresh", "-threshold", "--threshold", type=float, default=0.08
+    "-thresh", "--thresh", "-threshold", "--threshold", type=float, default=0.03
 )
 parser.add_argument("-c", "--c", "-crop", "--crop", action="store_true")
 parser.add_argument("--bt", "--black-threshold", type=int, default=16)
